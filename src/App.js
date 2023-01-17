@@ -29,7 +29,7 @@ function App() {
             path="/feed"
             render={() => <PostsPage
               message="No results found." 
-              filter={`owner__followed__owner__profiles=${profile_id}&`}
+              filter={`owner__followed__owner__profile=${profile_id}&`}
             />}
           />
           <Route
@@ -37,7 +37,7 @@ function App() {
             path="/liked"
             render={() => <PostsPage
               message="No results found." 
-              filter={`likes__owner__profiles=${profile_id}&ordering=-likes__created_at&`}
+              filter={`likes__owner__profile=${profile_id}&ordering=-likes__created_at&`}
             />}
           />
           <Route exact path="/signin" render={() => <SignInForm />} />
