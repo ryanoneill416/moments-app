@@ -13,7 +13,10 @@ import appStyles from "../../App.module.css";
 import btnStyles from "../../styles/Button.module.css";
 import Asset from "../../components/Asset";
 import { Alert, Image } from "react-bootstrap";
-import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom.min";
+import {
+  useHistory,
+  useParams,
+} from "react-router-dom/cjs/react-router-dom.min";
 import { axiosReq } from "../../api/axiosDefaults";
 
 function PostEditForm() {
@@ -30,7 +33,20 @@ function PostEditForm() {
   const history = useHistory();
   const { id } = useParams();
 
-  useEffect(())
+  useEffect(() => {
+    const handleMount = async () => {
+      try {
+        const { data } = await axiosReq.get(`/posts/${id}`);
+        const { title, content, image, is_owner } = data;
+
+        is_owner ? setPostData({ title, content, image }) : history.push("/");
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    handleMount();
+  }, [history, id]);
 
   const handleChange = (event) => {
     setPostData({
@@ -55,11 +71,14 @@ function PostEditForm() {
 
     formData.append("title", title);
     formData.append("content", content);
-    formData.append("image", imageInput.current.files[0]);
+
+    if (imageInput?.current?.files[0]) {
+      formData.append("image", imageInput.current.files[0]);
+    }
 
     try {
-      const { data } = await axiosReq.post("/posts/", formData);
-      history.push(`/posts/${data.id}`);
+      await axiosReq.put(`/posts/${id}/`, formData);
+      history.push(`/posts/${id}`);
     } catch (err) {
       console.log(err);
       if (err.response?.status !== 401) {
@@ -106,10 +125,10 @@ function PostEditForm() {
         className={`${btnStyles.Button} ${btnStyles.Blue}`}
         onClick={() => history.goBack()}
       >
-        cancel
+        Cancel
       </Button>
       <Button className={`${btnStyles.Button} ${btnStyles.Blue}`} type="submit">
-        create
+        Save
       </Button>
     </div>
   );
