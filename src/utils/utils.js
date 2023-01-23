@@ -16,3 +16,21 @@ export const fetchMoreData = async (resource, setResource) => {
     console.log(err);
   }
 };
+
+export const followHelper = (profile, clickedProfile, following_id) => {
+  return profile.id === clickedProfile.id
+    ? // Profile clicked
+      //Update foll count and set foll id
+      {
+        ...profile,
+        followers_count: profile.followers_count + 1,
+        following_id
+      }
+    : profile.is_owner
+    ? //This is profile of user
+      // update following count
+      { ...profile, following_count: profile.following_count + 1 }
+    : //Not profile use clicked on
+      // the user owns, return unchanged
+      profile;
+};
